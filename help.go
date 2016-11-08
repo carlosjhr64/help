@@ -31,6 +31,7 @@ func kv(a string) (string,string) {
   return k,v
 }
 
+// TODO: see uplc.go for better way
 func squeeze(l string) string {
   line,previous := "",byte(' ')
   for _,c := range []byte(l) {
@@ -249,6 +250,7 @@ func (options *Options) Types() string {
 }
 
 func (options *Options) InDict(name, word string) bool {
+  if word[0]!='-' {return false}
   list := options.Dict[name]
   for _,words := range list {
     for _,synonym := range words {
@@ -261,14 +263,14 @@ func (options *Options) InDict(name, word string) bool {
 func (options *Options) Matches(pattern []interface{}, i int) int {
   name,keys,hash,cache := "",options.Keys,options.Hash,options.Cache
   for _,token := range pattern {
-    if i>=len(keys) {return 0}
-    key := keys[i]
     switch token.(type) {
     case []interface{}:
       j := options.Matches(token.([]interface{}), i)
       if j>0 {i=j}
       continue
     case string:
+      if i>=len(keys) {return 0}
+      key := keys[i]
       s := token.(string)
       b,l := []byte(s),len(s)
       x,z := b[0],b[l-1]

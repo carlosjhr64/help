@@ -277,3 +277,29 @@ func TestNew(test *testing.T) {
   if options.Version != "a.b.c" {bad("New1")}
   if options.Help != TEST_HELP {bad("New2")}
 }
+
+var SNEAKY_HELP = `### The Sneaky One ###
+Usage:
+  delta [:options] <stock> [<factor>]
+Options:
+  --decay 1008
+  --days
+  --div   1
+Defaults:
+  factor  1.0
+Types:
+  ^[a-z]+$   stock
+  Float      factor
+  Int        --decay --days --div`
+
+func TestSneaky(test *testing.T) {
+  bad := test.Error
+  Testing = true; defer func() {Testing = false}()
+
+  options := new(Options)
+  options.Help = SNEAKY_HELP
+  options.Version = "0.0.1611070"
+  options.Args = []string{"delta","spy"}
+  a := options.Do()
+  if a!="OK" {bad("Sneaky got me!")}
+}
